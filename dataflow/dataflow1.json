@@ -1,0 +1,74 @@
+{
+	"name": "dataflow1",
+	"properties": {
+		"type": "MappingDataFlow",
+		"typeProperties": {
+			"sources": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText2",
+						"type": "DatasetReference"
+					},
+					"name": "source1",
+					"script": "source(output(\n\t\tProp_0 as string,\n\t\tProp_1 as string,\n\t\tProp_2 as string,\n\t\tProp_3 as string,\n\t\tProp_4 as string,\n\t\tProp_5 as string,\n\t\tProp_6 as string,\n\t\tProp_7 as string,\n\t\tProp_8 as string,\n\t\tProp_9 as string,\n\t\tProp_10 as string,\n\t\tProp_11 as string,\n\t\tProp_12 as string\n\t),\n\tallowSchemaDrift: true,\n\tvalidateSchema: false) ~> source1"
+				}
+			],
+			"sinks": [
+				{
+					"dataset": {
+						"referenceName": "DelimitedText3",
+						"type": "DatasetReference"
+					},
+					"name": "sense3creditcourses",
+					"script": "ConditionalSplit1@SENSE3creditcourses sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> sense3creditcourses"
+				},
+				{
+					"dataset": {
+						"referenceName": "DelimitedText4",
+						"type": "DatasetReference"
+					},
+					"name": "THcourseswithfacsorted",
+					"script": "facname sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> THcourseswithfacsorted"
+				},
+				{
+					"dataset": {
+						"referenceName": "DelimitedText5",
+						"type": "DatasetReference"
+					},
+					"name": "credit3coursesexceptSENSE",
+					"script": "ConditionalSplit1@Other3creditcourses sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> credit3coursesexceptSENSE"
+				},
+				{
+					"dataset": {
+						"referenceName": "DelimitedText6",
+						"type": "DatasetReference"
+					},
+					"name": "Original",
+					"script": "Transform sink(allowSchemaDrift: true,\n\tvalidateSchema: false) ~> Original"
+				}
+			],
+			"transformations": [
+				{
+					"name": "Transform",
+					"script": "source1 select(mapColumn(\n\t\tcoursecode = Prop_0,\n\t\tcoursetitle = Prop_1,\n\t\tcoursetype = Prop_2,\n\t\tL = Prop_3,\n\t\tT = Prop_4,\n\t\tP = Prop_5,\n\t\tJ = Prop_6,\n\t\tC = Prop_7,\n\t\tcourseowner = Prop_8,\n\t\tslot = Prop_9,\n\t\tvenue = Prop_10,\n\t\tfacname = Prop_11,\n\t\tfacschool = Prop_12\n\t))~> Transform"
+				},
+				{
+					"name": "credit3",
+					"script": "Transform filter(C=='3') ~> credit3"
+				},
+				{
+					"name": "facname",
+					"script": "Theorycourses sort(desc(facname, true)) ~> facname"
+				},
+				{
+					"name": "Theorycourses",
+					"script": "Transform filter(coursetype=='TH') ~> Theorycourses"
+				},
+				{
+					"name": "ConditionalSplit1",
+					"script": "credit3 split(courseowner=='SENSE',\n\tdisjoint: false) ~> ConditionalSplit1@(SENSE3creditcourses, Other3creditcourses)"
+				}
+			]
+		}
+	}
+}

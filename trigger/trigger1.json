@@ -1,0 +1,15 @@
+{
+	"name": "trigger1",
+	"properties": {
+		"runtimeState": "Stopped",
+		"type": "BlobEventsTrigger",
+		"typeProperties": {
+			"blobPathBeginsWith": "/mytelcocontainer/blobs/",
+			"scope": "/subscriptions/e9f6645d-d59d-48f9-bb30-f53f3f54ce92/resourceGroups/mytelcoRG/providers/Microsoft.Storage/storageAccounts/mytelcoresults",
+			"events": [
+				"Microsoft.Storage.BlobCreated",
+				"Microsoft.Storage.BlobDeleted"
+			]
+		}
+	}
+}
